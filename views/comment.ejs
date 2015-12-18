@@ -1,0 +1,23 @@
+<br>
+<% post.comments.forEach(function(comment, index){ %>
+<div class="comment">
+	<img src="/images/<%= comment.head %>" class="l_head">
+	<div class="comment_content">
+		<p style="padding: 0 0 10px;">
+			<a href="<%= comment.website %>"><%= comment.name %></a>
+			<span class="info"> 回复于 <%= comment.time %></span>
+		</p>
+		<p><%- comment.content %></p>
+	</div>
+</div>
+<% }) %>
+
+<form method="post">
+	<% if(user){ %>
+	<input type="text" name="name" value="<%= user.name %>" hidden>
+	<input type="text" name="email" value="<%= user.email %>" hidden>
+	<input type="text" name="website" value="/u/<%= user.name %>" hidden>
+	<textarea name="content" rows="5" cols="80" style="margin: 20px 0 20px;"></textarea><br>
+	<input type="submit" value="留 言" class="button sub">
+	<% } %>
+</form>

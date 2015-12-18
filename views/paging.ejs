@@ -1,0 +1,16 @@
+<br>
+<div class="page">
+	<% if(totalpage != 1 && totalpage != 0){ %>
+	<% if(!isFirstPage){ %>
+	<span class="prepage"><a href="?p=<%= page-1 %>" >上一页</a></span>
+	<% }else{ %>
+	<span class="prepage"><a>上一页</a></span>
+	<% } %>
+	<span>第<%= page %>页 共<%= totalpage %>页</span>
+	<% if(!isLastPage){ %>
+	<span class="nextpage"><a href="?p=<%= page+1 %>">下一页</a></span>
+	<% }else{ %>
+	<span class="nextpage"><a>下一页</a></span>
+	<% } %>
+	<% } %>
+</div>

@@ -1,0 +1,12 @@
+<%- include header %>
+<div class="form post-from">
+	<form method="post">
+		标题：<br><input type="text" name="title" class="button" value="<%= post.title %>" disabled="disabled"><br>
+		标签：<br><input type="text" name="tag1" class="tags" value="<%= post.tags[0] %>" disabled="disabled">
+		<input type="text" name="tag2" class="tags tags_after" value="<%= post.tags[1] %>" disabled="disabled">
+		<input type="text" name="tag3" class="tags tags_after" value="<%= post.tags[2] %>" disabled="disabled"><br>
+		正文:<br><textarea name="post" cols="100" rows="20"><%= post.post %></textarea><br>
+		<input type="submit" value="保存修改" class="button sub">
+	</form>
+</div>
+<%- include footer %>
