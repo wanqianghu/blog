@@ -13,8 +13,6 @@ var settings = require('./settings');
 var flash = require('connect-flash');
 var users = require('./routes/users');
 
-
-
 var app = express();
 
 // view engine setup
@@ -41,11 +39,11 @@ app.use(session({
 
 //增加图片路径
 app.use(multer({
-  dest:'./public/images',
-  rename:function(fieldname,filename){
-    return filename;
-  }
-})
+      dest:'./public/images',
+      rename:function(fieldname,filename){
+        return filename;
+      }
+    })
 );
 
 app.use('/', routes);
