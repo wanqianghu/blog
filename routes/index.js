@@ -322,7 +322,7 @@ router.get('/edit/:name/:day/:title', function(req, res){
 		});
 	});
 });
-//添加编辑路由(编辑页面保存文章)
+//修改文章
 router.post('/edit/:name/:day/:title', checkLogin);
 router.post('/edit/:name/:day/:title', function(req, res){
 	var currentUser = req.session.user;
@@ -337,7 +337,7 @@ router.post('/edit/:name/:day/:title', function(req, res){
 	});
 });
 
-//添加编辑路由(编辑页面保存文章)
+//删除文章
 router.get('/remove/:name/:day/:title', checkLogin);
 router.get('/remove/:name/:day/:title', function(req, res){
 	var currentUser = req.session.user;
@@ -350,6 +350,32 @@ router.get('/remove/:name/:day/:title', function(req, res){
 		res.redirect('/');
 	});
 });
+
+//转载文章
+router.get('/reprint/:name/:day/:title', checkLogin);
+router.get('/reprint/:name/:day/:title', function(req, res){
+	Post.edit(req.params.name, req.params.day, req.params.title, function(err, post){
+		if(err){
+			req.flash('error', err);
+			return res.redirect(back);
+		}
+		var currentUser = req.session.user,
+			reprint_from = {name:post.name, day:post.time.day, title:post.title},
+			reprint_to = {name:currentUser.name, head:currentUser.head};
+		console.log('获取原文成功');
+		Post.reprint(reprint_from, reprint_to, function(err, post){
+			if(err){
+				req.flash('error', err);
+				return res.redirect('back');
+			}
+			req.flash('success', '转载成功！');
+			console.log('转载成功');
+			var url = encodeURI('/u/' + post.name + '/' + post.time.day + '/' +post.title);
+			res.redirect(url);
+		});
+	});
+});
+
 
 //404页面
 router.use(function(req, res){
