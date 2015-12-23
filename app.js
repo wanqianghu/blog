@@ -13,6 +13,10 @@ var settings = require('./settings');
 var flash = require('connect-flash');
 var users = require('./routes/users');
 
+var fs = require('fs');
+var accessLog = fs.createWriteStream('access.log', {flags:'a'});
+var errorLog= fs.createWriteStream('error.log', {flags:'a'});
+
 var app = express();
 
 // view engine setup
@@ -22,10 +26,17 @@ app.use(flash());
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
+app.use(logger({stream:accessLog}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(function(err, req, res, next){
+  var meta = '[' + new Date() + ']' + req.url + '\n';
+  errorLog.write(meta + err.stack + '\n');
+  next();
+});
+//设置cookie记录用户登录为30天
 app.use(session({
   secret:settings.cookieSecret,
   key:settings.db,

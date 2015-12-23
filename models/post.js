@@ -214,19 +214,56 @@ Post.remove = function(name, day, title, callback){
 				mongodb.close();
 				return callback(err);
 			}
-			//根据用户名、日期和标题查找并删除一篇文章
-			collection.remove({
+			//查询要删除的文档
+			collection.findOne({
 				"name":name,
 				"time.day":day,
 				"title":title
-			},{
-				w:1
-			},function(err){
-				mongodb.close();
-				if (err) {
+			},function(err, doc){
+				if(err){
+					mongodb.close();
 					return callback(err);
 				}
-				callback(null);
+				//如果有reprint_from，即该文章是转载来的，先保存下来reprint_from
+				var reprint_from = "";
+				if(doc.reprint_info.reprint_from){
+					reprint_from = doc.reprint_info.reprint_from;
+				}
+				if(reprint_from != ""){
+					collection.update({
+						"name":reprint_from.name,
+						"time.day":reprint_from.day,
+						"title":reprint_from.title
+					},{
+						$pull:{
+							"reprint_info.reprint_to":{
+								"name":name,
+								"day":day,
+								"title":title
+							}
+						}
+					},function(err){
+						if(err){
+							mongodb.close();
+							return callback(err);
+						}
+					});
+				}
+
+				//删除转载来的文章所在的文档
+				collection.remove({
+					"name":name,
+					"time.day":day,
+					"title":title
+				},{
+					w:1
+				},function(err){
+					mongodb.close();
+					if (err) {
+						return callback(err);
+					}
+					callback(null);
+				});
 			});
 		});
 	});
@@ -243,7 +280,7 @@ Post.getArchive = function(callback){
 		db.collection('posts', function(err, collection){
 			if (err) {
 				mongodb.close();
-				return callback(err);	
+				return callback(err);
 			}
 			//返回只包含name、time、title属性的文档组成的文档数组
 			collection.find({}, {
@@ -419,5 +456,8 @@ Post.reprint = function(reprint_from, reprint_to, callback){
 		});
 	});
 };
+
+//删除一篇文章
+
 
 module.exports = Post;
