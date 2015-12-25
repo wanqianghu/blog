@@ -362,14 +362,12 @@ router.get('/reprint/:name/:day/:title', function(req, res){
 		var currentUser = req.session.user,
 			reprint_from = {name:post.name, day:post.time.day, title:post.title},
 			reprint_to = {name:currentUser.name, head:currentUser.head};
-		console.log('获取原文成功');
 		Post.reprint(reprint_from, reprint_to, function(err, post){
 			if(err){
 				req.flash('error', err);
 				return res.redirect('back');
 			}
 			req.flash('success', '转载成功！');
-			console.log('转载成功');
 			var url = encodeURI('/u/' + post.name + '/' + post.time.day + '/' +post.title);
 			res.redirect(url);
 		});
